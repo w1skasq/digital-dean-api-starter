@@ -22,3 +22,5 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+[tool.setuptools.packages.find]
+include = ["app*"]
