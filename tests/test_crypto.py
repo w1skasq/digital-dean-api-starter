@@ -16,9 +16,11 @@ PROFILES = tuple(KEY_BYTES.items())
 
 @pytest.mark.parametrize("backend", BACKENDS)
 @pytest.mark.parametrize("algorithm,key_size", PROFILES)
-@pytest.mark.parametrize("message", (b"", b"demo", "Навчальна примітка  ".encode()))
+@pytest.mark.parametrize(
+    "message",
+    (b"", b"demo", "Навчальна примітка  ".encode(), token_bytes(65536)),
+)
 def test_round_trip(backend, algorithm, key_size, message):
-    # Новий незалежний ключ на тест; лише одне шифрування з nonce=0.
     key, nonce, aad = token_bytes(key_size), bytes(12), b"synthetic-context"
     ct, tag = seal_bytes(backend, algorithm, key, nonce, message, aad)
     assert len(ct) == len(message)
@@ -46,6 +48,15 @@ def test_tampering_is_rejected(backend, algorithm, key_size, changed_part):
         open_bytes(backend, algorithm, key, nonce, ct, tag, aad)
 
 
+@pytest.mark.parametrize("backend", BACKENDS)
+@pytest.mark.parametrize("algorithm,key_size", PROFILES)
+def test_truncated_tag_is_rejected(backend, algorithm, key_size):
+    key, nonce, aad = token_bytes(key_size), bytes(12), b"synthetic-context"
+    ct, tag = seal_bytes(backend, algorithm, key, nonce, b"demo", aad)
+    with pytest.raises(CiphertextError):
+        open_bytes(backend, algorithm, key, nonce, ct, tag[:15], aad)
+
+
 @pytest.mark.parametrize("algorithm,key_size", PROFILES)
 @pytest.mark.parametrize("writer,reader", (BACKENDS, tuple(reversed(BACKENDS))))
 def test_cross_library(algorithm, key_size, writer, reader):
@@ -54,14 +65,25 @@ def test_cross_library(algorithm, key_size, writer, reader):
     assert open_bytes(reader, algorithm, key, nonce, ct, tag, aad) == b"demo"
 
 
-@pytest.mark.parametrize("args", (
-    ("unknown", bytes(32), bytes(12)),
-    ("AES-256-GCM", bytes(16), bytes(12)),
-    ("AES-128-GCM", bytes(16), bytes(11)),
-))
+@pytest.mark.parametrize(
+    "args",
+    (
+        ("unknown", bytes(32), bytes(12)),
+        ("AES-256-GCM", bytes(16), bytes(12)),
+        ("AES-128-GCM", bytes(16), bytes(11)),
+    ),
+)
 def test_invalid_profile(args):
     with pytest.raises(ValueError):
         validate_profile(*args)
+
+
+def test_unknown_backend_is_rejected():
+    key, nonce, aad = token_bytes(32), bytes(12), b"synthetic-context"
+    with pytest.raises(ValueError):
+        seal_bytes("unknown-backend", "AES-256-GCM", key, nonce, b"demo", aad)
+    with pytest.raises(ValueError):
+        open_bytes("unknown-backend", "AES-256-GCM", key, nonce, b"demo", bytes(16), aad)
 
 
 def test_counter_limit_and_concurrency():
@@ -72,6 +94,12 @@ def test_counter_limit_and_concurrency():
     assert all(len(value) == 12 for value in values)
     with pytest.raises(RuntimeError):
         seq.next()
+
+
+def test_invalid_nonce_sequence_limit():
+    for bad_limit in (0, -1, 1_000_001, "10", 10.5):
+        with pytest.raises(ValueError):
+            NonceSequence(limit=bad_limit)  # type: ignore[arg-type]
 
 
 def test_context_is_bound_to_expected_student():
@@ -85,7 +113,3 @@ def test_process_key_has_no_secret_in_repr():
     assert len(value.key) == 32
     assert "key=" not in repr(value)
     assert "nonces=" not in repr(value)
-
-
-# TODO: доповніть великими повідомленнями, усіченим тегом, невідомою бібліотекою.
-# TODO: перевірте конфігурацію лічильника і відсутність повторів між записами.

@@ -19,6 +19,16 @@ def create_process_key(limit: int = 1_000_000) -> ProcessKey:
     return ProcessKey(uuid4(), token_bytes(32), NonceSequence(limit))
 
 
-# TODO: збережіть один ProcessKey у стані застосунку/його залежностях.
-# TODO: маршрути запису й читання використовують цей самий матеріал ключа.
-# Не зберігайте ключ у репозиторії приміток, файлі, JSON чи Git.
+_process_key: ProcessKey = create_process_key()
+
+
+def get_process_key() -> ProcessKey:
+    """Повертає активний ключ процесу."""
+    return _process_key
+
+
+def reset_process_key(limit: int = 1_000_000) -> ProcessKey:
+    """Скидає ключ процесу (використовується лише у тестових фікстурах)."""
+    global _process_key
+    _process_key = create_process_key(limit=limit)
+    return _process_key
