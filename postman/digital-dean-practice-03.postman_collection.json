@@ -1,0 +1,332 @@
+{
+  "info": {
+    "name": "Digital Dean Practical 03",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Starter checks; use your own completed API. Set variant 0..3. manual_state is empty for normal runs."
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "variant",
+      "value": "0"
+    },
+    {
+      "key": "manual_state",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/health"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"healthy\", () => { pm.response.to.have.status(200); pm.expect(pm.response.json()).to.eql({status:\"ok\"}); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Complete own measured report",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/v1/lab/crypto/asymmetric-benchmark-results"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"complete measured report\", () => {",
+              "  pm.response.to.have.status(200);",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.schema_version).to.eql(1);",
+              "  pm.expect(body.key_generation).to.have.lengthOf(4);",
+              "  pm.expect(body.results).to.have.lengthOf(22);",
+              "  pm.expect(body.checks).to.have.lengthOf(22);",
+              "  pm.expect(body.checks.every(x => x.passed === true)).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Individual variant",
+      "item": [
+        {
+          "name": "03A Variant 0 profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/v1/lab/crypto/asymmetric-benchmark-results?profile=hpke-x25519-aes256gcm"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get(\"variant\") !== \"0\") { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"profile\", () => { pm.response.to.have.status(200); const b=pm.response.json(); pm.expect(b.results).to.have.lengthOf(6); pm.expect(b.results.every(x=>x.profile===\"hpke-x25519-aes256gcm\")).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03B Variant 1 size",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/v1/lab/crypto/asymmetric-benchmark-results?payload_bytes=1024"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get(\"variant\") !== \"1\") { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"size\", () => { pm.response.to.have.status(200); const b=pm.response.json(); pm.expect(b.results).to.have.lengthOf(6); pm.expect(b.results.every(x=>x.payload_bytes===1024)).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03C Variant 2 operation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/v1/lab/crypto/asymmetric-benchmark-results?operation=decrypt"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get(\"variant\") !== \"2\") { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"operation\", () => { pm.response.to.have.status(200); const b=pm.response.json(); pm.expect(b.results).to.have.lengthOf(11); pm.expect(b.results.every(x=>x.operation===\"decrypt\")).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03D Variant 3 summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/v1/lab/crypto/asymmetric-benchmark-results"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get(\"variant\") !== \"3\") { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"summary\", () => { pm.response.to.have.status(200); const s=pm.response.json().summary; pm.expect(s.key_profiles_count).to.eql(4); pm.expect(s.results_count).to.eql(22); pm.expect(s.checks_count).to.eql(22); pm.expect(s.all_checks_passed).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04A Invalid profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/v1/lab/crypto/asymmetric-benchmark-results?profile=unknown"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get(\"variant\") !== \"0\") { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"422\", () => pm.response.to.have.status(422));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04B Invalid size",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/v1/lab/crypto/asymmetric-benchmark-results?payload_bytes=65"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get(\"variant\") !== \"1\") { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"422\", () => pm.response.to.have.status(422));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04C Invalid operation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/v1/lab/crypto/asymmetric-benchmark-results?operation=keygen"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get(\"variant\") !== \"2\") { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"422\", () => pm.response.to.have.status(422));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Manual file states",
+      "description": "Only manual local tests; do not run as part of normal collection run.",
+      "item": [
+        {
+          "name": "05 Missing report local state",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/v1/lab/crypto/asymmetric-benchmark-results"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get(\"manual_state\") !== \"missing\") { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"safe 404\", () => { pm.response.to.have.status(404); pm.expect(pm.response.json()).to.eql({detail:\"benchmark report not found\"}); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 Invalid report local state",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/v1/lab/crypto/asymmetric-benchmark-results"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get(\"manual_state\") !== \"invalid\") { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"safe 500\", () => { pm.response.to.have.status(500); pm.expect(pm.response.json()).to.eql({detail:\"benchmark report invalid\"}); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

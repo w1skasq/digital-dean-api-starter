@@ -1,0 +1,3 @@
+# Native HPKE Suite is available in cryptography 48.
+# Keep the practical 2 dependencies; this is an additive pin.
+cryptography==48.0.1
