@@ -1,9 +1,17 @@
-"""Додайте новий маршрут та підключення до наявного app/main.py."""
+"""HTTP-маршрут читання перевіреного звіту асиметричного експерименту (Варіант 0)."""
+
 import json
 from pathlib import Path
-from fastapi import APIRouter, HTTPException
+
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import ValidationError
-from app.schemas.asymmetric_report import BenchmarkReport, validate_complete_report
+
+from app.schemas.asymmetric_report import (
+    BenchmarkReport,
+    BenchmarkResponse,
+    ProfileId,
+    validate_complete_report,
+)
 
 router = APIRouter(prefix="/api/v1/lab/crypto", tags=["asymmetric-lab"])
 REPORT_PATH = Path(__file__).resolve().parents[2] / "results/practice-03/report.json"
@@ -29,8 +37,11 @@ def load_report() -> BenchmarkReport:
             raw = stream.read(MAX_REPORT_BYTES + 1)
         if len(raw) > MAX_REPORT_BYTES:
             raise ValueError("report too large")
-        data = json.loads(raw, object_pairs_hook=_unique_object,
-                          parse_constant=_reject_constant)
+        data = json.loads(
+            raw,
+            object_pairs_hook=_unique_object,
+            parse_constant=_reject_constant,
+        )
         return validate_complete_report(data)
     except FileNotFoundError as exc:
         raise HTTPException(404, "benchmark report not found") from exc
@@ -38,8 +49,24 @@ def load_report() -> BenchmarkReport:
         raise HTTPException(500, "benchmark report invalid") from exc
 
 
-def get_asymmetric_benchmark_results() -> BenchmarkReport:
-    # TODO register @router.get("/asymmetric-benchmark-results", response_model=...)
-    # TODO return validated report and implement the individual variant.
-    # Do not import/run the benchmark here or accept a client file path.
-    raise NotImplementedError("Implement the new API operation")
+@router.get("/asymmetric-benchmark-results", response_model=BenchmarkResponse)
+def get_asymmetric_benchmark_results(
+    profile: ProfileId | None = Query(
+        default=None,
+        description="Необов'язковий фільтр результатів за криптографічним профілем (Варіант 0).",
+    ),
+) -> BenchmarkResponse:
+    report = load_report()
+    filtered_results = (
+        [item for item in report.results if item.profile == profile]
+        if profile is not None
+        else list(report.results)
+    )
+    return BenchmarkResponse(
+        schema_version=report.schema_version,
+        experiment=report.experiment,
+        environment=report.environment,
+        key_generation=report.key_generation,
+        results=filtered_results,
+        checks=report.checks,
+    )
