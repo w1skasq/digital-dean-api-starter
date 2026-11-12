@@ -1,0 +1,3 @@
+# Додайте ці залежності до наявного pyproject.toml.
+cryptography==48.0.1
+pycryptodome==3.24.0
