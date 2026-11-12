@@ -22,12 +22,24 @@ class SecureNoteRepository:
         self._items: dict[UUID, EncryptedNote] = {}
 
     def add(self, note: EncryptedNote) -> None:
-        """TODO: зберегти коректний конверт без дублювання note_id."""
-        raise NotImplementedError("Implement encrypted note storage")
+        """Зберегти коректний конверт без дублювання note_id."""
+        if note.note_id in self._items:
+            raise ValueError("Duplicate note_id")
+        self._items[note.note_id] = note
 
     def get(self, student_id: UUID, note_id: UUID) -> EncryptedNote:
-        """TODO: перевірити належність ресурсу; невідомий запис дає KeyError."""
-        raise NotImplementedError("Implement resource-scoped lookup")
+        """Перевірити належність ресурсу; невідомий запис дає KeyError."""
+        note = self._items.get(note_id)
+        if note is None or note.student_id != student_id:
+            raise KeyError("Note not found")
+        return note
+
+    def replace(self, note: EncryptedNote) -> None:
+        """Оновити конверт існуючої примітки (варіант 0)."""
+        existing = self._items.get(note.note_id)
+        if existing is None or existing.student_id != note.student_id:
+            raise KeyError("Note not found")
+        self._items[note.note_id] = note
 
     def clear(self) -> None:
         """Очищення записів не змінює ключ і не скидає його лічильник."""
@@ -35,6 +47,3 @@ class SecureNoteRepository:
 
 
 repository = SecureNoteRepository()
-
-# TODO: додайте операції свого індивідуального варіанта.
-# Підміна _items допустима лише в тестах, не через окремий HTTP-маршрут.

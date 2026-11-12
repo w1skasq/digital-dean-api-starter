@@ -17,3 +17,4 @@ def health() -> dict[str, str]:
 
 
 app.include_router(students_router)
+from app.api.secure_notes import router as secure_notes_router
