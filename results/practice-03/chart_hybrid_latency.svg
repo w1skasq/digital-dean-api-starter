@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="500" viewBox="0 0 980 500">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="490.0" y="28" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold" fill="#111">Медіанний час шифрування та розшифрування гібридних схем (мкс, менше — краще)</text>
+<text x="490.0" y="48" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#555">Джерело: results/practice-03/report.json (5 серій × 20 операцій, commit 9d3beec)</text>
+<line x1="85" y1="385.0" x2="950" y2="385.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="77" y="389.0" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">0</text>
+<line x1="85" y1="346.2" x2="950" y2="346.2" stroke="#e5e7eb" stroke-width="1"/>
+<text x="77" y="350.2" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">400</text>
+<line x1="85" y1="307.5" x2="950" y2="307.5" stroke="#e5e7eb" stroke-width="1"/>
+<text x="77" y="311.5" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">800</text>
+<line x1="85" y1="268.8" x2="950" y2="268.8" stroke="#e5e7eb" stroke-width="1"/>
+<text x="77" y="272.8" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">1200</text>
+<line x1="85" y1="230.0" x2="950" y2="230.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="77" y="234.0" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">1600</text>
+<line x1="85" y1="191.2" x2="950" y2="191.2" stroke="#e5e7eb" stroke-width="1"/>
+<text x="77" y="195.2" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">2000</text>
+<line x1="85" y1="152.5" x2="950" y2="152.5" stroke="#e5e7eb" stroke-width="1"/>
+<text x="77" y="156.5" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">2400</text>
+<line x1="85" y1="113.8" x2="950" y2="113.8" stroke="#e5e7eb" stroke-width="1"/>
+<text x="77" y="117.8" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">2800</text>
+<line x1="85" y1="75.0" x2="950" y2="75.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="77" y="79.0" text-anchor="end" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">3200</text>
+<text x="22" y="230.0" transform="rotate(-90 22,230.0)" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold" fill="#111">Медіанний час на операцію, мкс</text>
+<rect x="112.1" y="379.6" width="30" height="5.4" fill="#d95f02" rx="2"/>
+<text x="127.1" y="375.6" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">56</text>
+<rect x="145.1" y="375.7" width="30" height="9.3" fill="#1b9e77" rx="2"/>
+<text x="160.1" y="371.7" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">96</text>
+<rect x="178.1" y="372.6" width="30" height="12.4" fill="#7570b3" rx="2"/>
+<text x="193.1" y="368.6" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">128</text>
+<text x="157.1" y="403" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#111">encrypt</text>
+<text x="229.2" y="421" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">1 KiB (1024 Б)</text>
+<line x1="229.2" y1="75" x2="229.2" y2="385" stroke="#f3f4f6" stroke-width="1"/>
+<rect x="256.2" y="189.8" width="30" height="195.2" fill="#d95f02" rx="2"/>
+<text x="271.2" y="185.8" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">2014</text>
+<rect x="289.2" y="379.6" width="30" height="5.4" fill="#1b9e77" rx="2"/>
+<text x="304.2" y="375.6" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">56</text>
+<rect x="322.2" y="375.6" width="30" height="9.4" fill="#7570b3" rx="2"/>
+<text x="337.2" y="371.6" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">97</text>
+<text x="301.2" y="403" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#111">decrypt</text>
+<line x1="373.3" y1="75" x2="373.3" y2="385" stroke="#f3f4f6" stroke-width="1"/>
+<rect x="400.4" y="376.8" width="30" height="8.2" fill="#d95f02" rx="2"/>
+<text x="415.4" y="372.8" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">84</text>
+<rect x="433.4" y="371.0" width="30" height="14.0" fill="#1b9e77" rx="2"/>
+<text x="448.4" y="367.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">144</text>
+<rect x="466.4" y="372.0" width="30" height="13.0" fill="#7570b3" rx="2"/>
+<text x="481.4" y="368.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">134</text>
+<text x="445.4" y="403" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#111">encrypt</text>
+<text x="517.5" y="421" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">64 KiB (65536 Б)</text>
+<line x1="517.5" y1="75" x2="517.5" y2="385" stroke="#f3f4f6" stroke-width="1"/>
+<rect x="544.6" y="181.3" width="30" height="203.7" fill="#d95f02" rx="2"/>
+<text x="559.6" y="177.3" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">2103</text>
+<rect x="577.6" y="376.6" width="30" height="8.4" fill="#1b9e77" rx="2"/>
+<text x="592.6" y="372.6" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">87</text>
+<rect x="610.6" y="370.0" width="30" height="15.0" fill="#7570b3" rx="2"/>
+<text x="625.6" y="366.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">154</text>
+<text x="589.6" y="403" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#111">decrypt</text>
+<line x1="661.7" y1="75" x2="661.7" y2="385" stroke="#f3f4f6" stroke-width="1"/>
+<rect x="688.8" y="288.0" width="30" height="97.0" fill="#d95f02" rx="2"/>
+<text x="703.8" y="284.0" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">1001</text>
+<rect x="721.8" y="277.3" width="30" height="107.7" fill="#1b9e77" rx="2"/>
+<text x="736.8" y="273.3" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">1112</text>
+<rect x="754.8" y="282.4" width="30" height="102.6" fill="#7570b3" rx="2"/>
+<text x="769.8" y="278.4" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">1059</text>
+<text x="733.8" y="403" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#111">encrypt</text>
+<text x="805.8" y="421" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" fill="#374151">1 MiB (1048576 Б)</text>
+<line x1="805.8" y1="75" x2="805.8" y2="385" stroke="#f3f4f6" stroke-width="1"/>
+<rect x="832.9" y="93.8" width="30" height="291.2" fill="#d95f02" rx="2"/>
+<text x="847.9" y="89.8" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">3005</text>
+<rect x="865.9" y="325.4" width="30" height="59.6" fill="#1b9e77" rx="2"/>
+<text x="880.9" y="321.4" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">615</text>
+<rect x="898.9" y="324.2" width="30" height="60.8" fill="#7570b3" rx="2"/>
+<text x="913.9" y="320.2" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="9.5" fill="#111">628</text>
+<text x="877.9" y="403" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" fill="#111">decrypt</text>
+<line x1="85" y1="75" x2="85" y2="385" stroke="#374151" stroke-width="1.5"/>
+<line x1="85" y1="385" x2="950" y2="385" stroke="#374151" stroke-width="1.5"/>
+<rect x="85" y="457" width="14" height="14" fill="#d95f02" rx="2"/>
+<text x="105" y="468" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#111">RSA-3072 + AES-256-GCM</text>
+<rect x="375" y="457" width="14" height="14" fill="#1b9e77" rx="2"/>
+<text x="395" y="468" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#111">HPKE X25519 + AES-256-GCM</text>
+<rect x="665" y="457" width="14" height="14" fill="#7570b3" rx="2"/>
+<text x="685" y="468" font-family="Segoe UI, Arial, sans-serif" font-size="11.5" fill="#111">HPKE P-256 + AES-256-GCM</text>
+</svg>
