@@ -1,4 +1,4 @@
-"""Тести семантичної схеми звіту, HTTP-маршруту та індивідуального Варіанта 0."""
+﻿"""РўРµСЃС‚Рё СЃРµРјР°РЅС‚РёС‡РЅРѕС— СЃС…РµРјРё Р·РІС–С‚Сѓ, HTTP-РјР°СЂС€СЂСѓС‚Сѓ С‚Р° С–РЅРґРёРІС–РґСѓР°Р»СЊРЅРѕРіРѕ Р’Р°СЂС–Р°РЅС‚Р° 0."""
 
 import copy
 import json
@@ -107,7 +107,7 @@ def test_invalid_report_reader(tmp_path, monkeypatch, raw):
 
 def test_route_registered():
     openapi = app.openapi()
-    assert openapi["info"]["version"] == "0.3.0"
+    assert openapi["info"]["version"] == "0.4.0"
     paths = openapi["paths"]
     assert ROUTE in paths
     assert "get" in paths[ROUTE]
