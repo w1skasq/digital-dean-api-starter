@@ -2,21 +2,51 @@
 from app.security.hashing.profiles import CHUNK_BYTES, PROFILES, make_hasher
 
 
+def _validate_inputs(algorithm: str, data: bytes, mode: str) -> None:
+    if type(algorithm) is not str or algorithm not in PROFILES:
+        raise ValueError("unknown hash profile")
+    if type(data) is not bytes:
+        raise TypeError("data must be exact bytes")
+    if type(mode) is not str or mode not in ("whole", "chunked"):
+        raise ValueError("mode must be 'whole' or 'chunked'")
+
+
 def prepare_operation(algorithm: str, data: bytes, mode: str = "whole"):
-    # TODO validate and prepare immutable chunks OUTSIDE the timed operation.
-    # TODO return a no-argument callable that makes a NEW hasher, updates it,
-    # and returns digest bytes on EVERY call. Never capture a mutable hasher.
-    raise NotImplementedError("Prepare a repeatable full hashing operation")
+    """Validate and prepare immutable chunks OUTSIDE the timed operation."""
+    _validate_inputs(algorithm, data, mode)
+    # Проверим доступность конструктора в среде заранее
+    make_hasher(algorithm)
+
+    if mode == "whole":
+        def run_whole() -> bytes:
+            state = make_hasher(algorithm)
+            state.update(data)
+            return state.digest()
+
+        return run_whole
+
+    chunks = tuple(data[i:i + CHUNK_BYTES] for i in range(0, len(data), CHUNK_BYTES))
+
+    def run_chunked() -> bytes:
+        state = make_hasher(algorithm)
+        for part in chunks:
+            state.update(part)
+        return state.digest()
+
+    return run_chunked
 
 
 def hash_bytes(algorithm: str, data: bytes, mode: str = "whole") -> bytes:
-    # TODO validate the profile, bytes input and whole/chunked mode.
-    # TODO create a NEW hasher for each call, update, return digest() bytes.
-    # May call prepare_operation(... )(). The benchmark prepares ONCE, not per run.
-    # chunked uses CHUNK_BYTES; do not keep mutable global hash objects.
-    raise NotImplementedError("Implement whole and chunked hashing")
+    """Create a NEW hasher for each call, update, return digest() bytes."""
+    return prepare_operation(algorithm, data, mode)()
 
 
 def hamming_bits(left: bytes, right: bytes) -> int:
-    # TODO require equal nonzero lengths; count differing bits, not hex digits.
-    raise NotImplementedError("Implement bytewise Hamming distance")
+    """Require equal nonzero lengths; count differing bits, not hex digits."""
+    if type(left) is not bytes or type(right) is not bytes:
+        raise TypeError("both arguments must be exact bytes")
+    if len(left) == 0 or len(right) == 0:
+        raise ValueError("inputs must be non-empty")
+    if len(left) != len(right):
+        raise ValueError("inputs must have equal byte length")
+    return sum((a ^ b).bit_count() for a, b in zip(left, right))
