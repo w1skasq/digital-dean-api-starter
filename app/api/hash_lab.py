@@ -1,9 +1,11 @@
 """Новий маршрутизатор: зареєструйте GET і підключіть до наявного app/main.py."""
 import json
 from pathlib import Path
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import ValidationError
 from app.schemas.hash_report import HashReport, HashResponse, validate_report
+from app.security.hashing.profiles import AlgorithmID
 
 router = APIRouter(prefix="/api/v1/lab/crypto", tags=["hash-lab"])
 REPORT_PATH = Path(__file__).resolve().parents[2] / "results/practice-04/report.json"
@@ -29,8 +31,11 @@ def load_report() -> HashReport:
             raw = stream.read(MAX_REPORT_BYTES + 1)
         if len(raw) > MAX_REPORT_BYTES:
             raise ValueError("report too large")
-        data = json.loads(raw, object_pairs_hook=_unique_object,
-                          parse_constant=_reject_constant)
+        data = json.loads(
+            raw,
+            object_pairs_hook=_unique_object,
+            parse_constant=_reject_constant,
+        )
         return validate_report(data)
     except FileNotFoundError as exc:
         raise HTTPException(404, "hash report not found") from exc
@@ -38,8 +43,28 @@ def load_report() -> HashReport:
         raise HTTPException(500, "hash report invalid") from exc
 
 
-def get_hash_benchmark_results() -> HashResponse:
-    # TODO @router.get("/hash-benchmark-results", response_model=HashResponse)
-    # TODO full validation BEFORE filtering and the student's own variant.
-    # No arbitrary path, POST benchmark, input documents or benchmark imports.
-    raise NotImplementedError("Implement the new hash results API operation")
+@router.get(
+    "/hash-benchmark-results",
+    response_model=HashResponse,
+    summary="Отримати перевірені результати дослідження алгоритмів хешування",
+    description=(
+        "Повертає валідований звіт експерименту хешування. "
+        "Варіант 0: необов'язковий параметр `algorithm` фільтрує масив `results` "
+        "за одним із 7 фіксованих ідентифікаторів профілів."
+    ),
+)
+def get_hash_benchmark_results(
+    algorithm: Annotated[
+        AlgorithmID | None,
+        Query(
+            description="Необов'язковий фільтр за ідентифікатором профілю (Варіант 0)."
+        ),
+    ] = None,
+) -> HashResponse:
+    report = load_report()
+    payload = report.model_dump()
+    if algorithm is not None:
+        payload["results"] = [
+            item for item in payload["results"] if item["algorithm"] == algorithm
+        ]
+    return HashResponse.model_validate(payload)
