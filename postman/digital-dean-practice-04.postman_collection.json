@@ -1,0 +1,329 @@
+{
+  "info": {
+    "name": "Digital Dean Practical 04",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Student starter checks; own implementation and own measured report required."
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "variant",
+      "value": "0"
+    },
+    {
+      "key": "manual_state",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/health"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"healthy\",()=>{pm.response.to.have.status(200);pm.expect(pm.response.json()).to.eql({status:\"ok\"});});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Complete own hash report",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/v1/lab/crypto/hash-benchmark-results"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"complete hash report\", () => {",
+              "  pm.response.to.have.status(200);",
+              "  const b = pm.response.json();",
+              "  const a = b.algorithms.filter(x => x.available).length;",
+              "  pm.expect(b.schema_version).to.eql(1);",
+              "  pm.expect(b.algorithms).to.have.lengthOf(7);",
+              "  pm.expect(b.results).to.have.lengthOf(8 * a);",
+              "  pm.expect(b.avalanche).to.have.lengthOf(a);",
+              "  pm.expect(b.checks).to.have.lengthOf(6 * a);",
+              "  pm.expect(b.checks.every(x => x.passed)).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03A Algorithm variant 0",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/v1/lab/crypto/hash-benchmark-results?algorithm=sha256"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.collectionVariables.get(\"variant\") !== \"0\") { pm.execution.skipRequest(); }"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"algorithm filter\",()=>{pm.response.to.have.status(200);const b=pm.response.json();pm.expect(b.results).to.have.lengthOf(8);pm.expect(b.results.every(x=>x.algorithm===\"sha256\")).to.eql(true);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03B Size variant 1",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/v1/lab/crypto/hash-benchmark-results?payload_bytes=1024"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.collectionVariables.get(\"variant\") !== \"1\") { pm.execution.skipRequest(); }"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"size filter\",()=>{pm.response.to.have.status(200);const b=pm.response.json();const a=b.algorithms.filter(x=>x.available).length;pm.expect(b.results).to.have.lengthOf(2*a);pm.expect(b.results.every(x=>x.payload_bytes===1024)).to.eql(true);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03C Mode variant 2",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/v1/lab/crypto/hash-benchmark-results?mode=chunked"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.collectionVariables.get(\"variant\") !== \"2\") { pm.execution.skipRequest(); }"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"mode filter\",()=>{pm.response.to.have.status(200);const b=pm.response.json();const a=b.algorithms.filter(x=>x.available).length;pm.expect(b.results).to.have.lengthOf(4*a);pm.expect(b.results.every(x=>x.mode===\"chunked\")).to.eql(true);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03D Summary variant 3",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/v1/lab/crypto/hash-benchmark-results"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.collectionVariables.get(\"variant\") !== \"3\") { pm.execution.skipRequest(); }"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"summary\",()=>{pm.response.to.have.status(200);const b=pm.response.json();const a=b.algorithms.filter(x=>x.available).length;pm.expect(b.summary).to.eql({algorithms_count:7,available_count:a,results_count:8*a,checks_count:6*a,all_checks_passed:true});});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04A Invalid algorithm",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/v1/lab/crypto/hash-benchmark-results?algorithm=unknown"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.collectionVariables.get(\"variant\") !== \"0\") { pm.execution.skipRequest(); }"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"422\",()=>pm.response.to.have.status(422));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04B Invalid size",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/v1/lab/crypto/hash-benchmark-results?payload_bytes=65"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.collectionVariables.get(\"variant\") !== \"1\") { pm.execution.skipRequest(); }"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"422\",()=>pm.response.to.have.status(422));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04C Invalid mode",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/api/v1/lab/crypto/hash-benchmark-results?mode=unknown"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.collectionVariables.get(\"variant\") !== \"2\") { pm.execution.skipRequest(); }"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"422\",()=>pm.response.to.have.status(422));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Manual local file states",
+      "description": "Run ONE selected manual request, not the whole collection, after backing up the local report.",
+      "item": [
+        {
+          "name": "05 Manual missing file",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/v1/lab/crypto/hash-benchmark-results"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get(\"manual_state\") !== \"missing\") { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"safe 404\",()=>{pm.response.to.have.status(404);pm.expect(pm.response.json()).to.eql({detail:\"hash report not found\"});});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 Manual invalid file",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/v1/lab/crypto/hash-benchmark-results"
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.collectionVariables.get(\"manual_state\") !== \"invalid\") { pm.execution.skipRequest(); }"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"safe 500\",()=>{pm.response.to.have.status(500);pm.expect(pm.response.json()).to.eql({detail:\"hash report invalid\"});});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
